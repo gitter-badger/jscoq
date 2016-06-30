@@ -6,13 +6,6 @@
 
 "use strict";
 
-var COQ_LOG_LEVELS = {
-    DEBUG : 'debug',
-    INFO  : 'info',
-    WARN  : 'warn',
-    ERROR : 'error'
-};
-
 /***********************************************************************/
 /* The CoqLayout class contains the goal, query, and packages buffer   */
 /***********************************************************************/
@@ -63,10 +56,11 @@ class CoqLayoutClassic {
         <div class="caption">
           Messages
           <select name="msg_filter">
-            <option value="3">error</option>
-            <option value="2">warn</option>
-            <option value="1" selected="selected">info</option>
-            <option value="0">debug</option>
+            <option value="0">Error</option>
+            <option value="1">Warning</option>
+            <option value="2">Notice</option>
+            <option value="3" selected="selected">Info</option>
+            <option value="4">Debug</option>
           </select>
         </div>
         <div class="content" id="query-panel"></div>
@@ -80,7 +74,7 @@ class CoqLayoutClassic {
         return html;
     }
 
-    // Reference to the jsCoq object.
+    // We first initialize the providers.
     constructor(options) {
 
         // Our reference to the IDE, goal display & query buffer.
@@ -116,12 +110,16 @@ class CoqLayoutClassic {
             var pxSize  = parseFloat(getComputedStyle(this.query)['font-size']);
 
             // A correction of almost 2.0 is needed here ... !!!
-            var emWidth = Math.floor(this.query.offsetWidth / pxSize * 1.65);
+            var emWidth = Math.floor(this.query.offsetWidth / pxSize * 1.45);
             console.log("Setting printing width to: " + emWidth );
 
             // XXX: What if the panel is toogled from the start...!
             // Shoud send a message.
-            this.coq.set_printing_width(emWidth);
+            var msg = ["SetOpt", null,
+                       ["Printing", "Width"],
+                       ["IntValue", emWidth]
+                      ];
+            this.coq.postMessage(msg);
         }, 500);
     }
 
@@ -154,12 +152,14 @@ class CoqLayoutClassic {
     update_goals(str) {
         // TODO: Add diff/history of goals.
         // XXX: should send a message.
-        this.proof.textContent = str;
+        this.proof.innerHTML = str;
     }
 
     // Add a log event received from Coq.
     log(text, level) {
 
+        // Levels are taken from Coq itself:
+        //   | Debug | Info | Notice | Warning | Error
         d3.select(this.query)
             .append('div')
             .attr('class', level)
@@ -181,11 +181,14 @@ class CoqLayoutClassic {
         var length = level_select.getElementsByTagName('option').length;
         var min_log_level = parseInt(level_select.value, 10);
         var i;
+
         // XXXX!
-        for(i=0 ; i < min_log_level ; i++)
-            this.log_css_rules[i].style.display = 'none';
-        for(i=min_log_level ; i < length ; i++)
+        console.log('setting lvl', min_log_level);
+        for(i = 0 ; i <= min_log_level ; i++)
             this.log_css_rules[i].style.display = 'block';
+
+        for(i = min_log_level+1 ; i < length ; i++)
+            this.log_css_rules[i].style.display = 'none';
     }
 
     // Execute a query to Coq

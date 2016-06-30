@@ -27,7 +27,7 @@ install:
 - "[ -e .opam ] || opam init -j ${NJOBS} --compiler=${COMPILER} -n -y"
 - eval $(opam config env)
 - opam config var root
-- opam install -j ${NJOBS} -y camlp5 yojson ppx_deriving_yojson js_of_ocaml ${EXTRA_OPAM}
+- opam install -j ${NJOBS} -y camlp5 yojson ppx_deriving_yojson ppx_import js_of_ocaml ${EXTRA_OPAM}
 - opam list
 - mkdir -p ${HOME}/external && pushd ${HOME}/external
 - git clone --depth=3 -b v8.6 git://scm.gforge.inria.fr/coq/coq.git coq-v8.6+32bit

@@ -6,7 +6,7 @@ include config.mk
 # XXX: Move to a common makefile
 all:
 
-all-addons: ssr-libs coquelicot flocq mtac tlc color sf cpdt hott dsp plugin-utils extlib mirror-core
+all-addons: ssr-libs coquelicot flocq mtac tlc color sf cpdt hott dsp plugin-utils extlib mirror-core peacoq
 
 ifndef VERBOSE
 .SILENT:

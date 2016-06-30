@@ -317,7 +317,7 @@ $ ./build.sh
 * To run jscoq in locally you may need to start your browser as:
 
   ```
-$ google-chrome-beta --allow-file-access-from-files --js-flags="--stack-size=65536" index.html
+$ google-chrome-beta --allow-file-access-from-files --js-flags="--stack-size=65536" newide.html
   ```
 
 * Profit!
